@@ -99,9 +99,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'project_manage',
-        'USER': 'project_manage',
-        'PASSWORD': 'project_manage123@',
-        'HOST': 'rm-2ze6pqdr2zs556752ko.mysql.rds.aliyuncs.com',
+        'USER': 'user',
+        'PASSWORD': 'pwd',
+        'HOST': 'IP',
         'PORT': '3306',
     },
 }
