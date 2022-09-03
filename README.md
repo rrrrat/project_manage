@@ -30,7 +30,7 @@ DATABASES = {
         'NAME': 'project_manage',  # 数据库名
         'USER': 'user',  # 数据库用户名
         'PASSWORD': 'pwd',  # 数据库密码
-        'HOST': '47.94.111.124',  # 数据库地址
+        'HOST': 'IP',  # 数据库地址
         'PORT': '3306',  # 数据库端口
     },
 }
