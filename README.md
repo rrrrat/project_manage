@@ -28,8 +28,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'project_manage',  # 数据库名
-        'USER': 'root',  # 数据库用户名
-        'PASSWORD': '2030916',  # 数据库密码
+        'USER': 'user',  # 数据库用户名
+        'PASSWORD': 'pwd',  # 数据库密码
         'HOST': '47.94.111.124',  # 数据库地址
         'PORT': '3306',  # 数据库端口
     },
