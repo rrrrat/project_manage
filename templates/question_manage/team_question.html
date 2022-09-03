@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link href="/static/component/layui/css/layui.css" rel="stylesheet" />
+        <link rel="stylesheet" href="/static/admin/css/pearForm.css" />
+		<link href="/static/admin/css/pearCommon.css" rel="stylesheet" />
+        <link rel="stylesheet" href="/static/admin/css/pearOper.css"/>
+	</head>
+	<body class="pear-container">
+	<div class="layui-card">
+	    <div class="layui-card-body">
+	        <table id="role-table" lay-filter="role-table"></table>
+	    </div>
+	</div>
+	</body>
+	
+	<script type="text/html" id="role-bar">
+	    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="views"><i class="layui-icon layui-icon-circle-dot"></i></button>
+	</script>
+
+
+        <script type="text/html" id="createtime">
+            {% verbatim myblock %}
+            {{layui.util.toDateString(d.createtime, 'yyyy-MM-dd HH:mm:ss')}}
+            {% endverbatim myblock %}
+        </script>
+		<script src="/static/component/layui/layui.js"></script>
+		<script>
+		    layui.use(['table','form','jquery'],function () {
+		        let table = layui.table;
+		        let form = layui.form;
+		        let $ = layui.jquery;
+		        var pearOper = layui.pearOper;
+		        var pearTab = layui.pearTab;
+		
+		        let MODULE_PATH = "{% url 'question_manage:question' %}";
+		
+		        let cols = [
+		            [
+		                {type:'checkbox'},
+		                {field:'id', title:'ID', width:80, fixed: 'left', unresize: true, totalRowText: '合计'},
+		                {title: '姓名', field: 'name', align:'center', width:120},
+		                {title: '问题总数', field: 'allquestionlen', align:'center', width:120},
+		                {title: '待解决问题', field: 'unresolvedlen', align:'center', width:120},
+		                {title: '已解决问题', field: 'solved', align:'center', width:120},
+		                {title: '本月新增', field: 'monquestion', align:'center', width:120},
+		                {title: '本周新增', field: 'weekquestionlen', align:'center', width:120},
+		                {title: '本日新增', field: 'dayquestion', align:'center', width:120},
+		            ]
+		        ];
+		
+		        table.render({
+		            elem: '#role-table',
+		            url: '{% url 'question_manage:get_team_question' %}',
+		            page: true ,
+		            cols: cols ,
+		            skin: 'line',
+		            toolbar: '#role-toolbar',
+		            defaultToolbar: [{
+		                layEvent: 'refresh',
+		                icon: 'layui-icon-refresh',
+		            }, 'filter', 'print', 'exports']
+		        });
+
+		
+		        table.on('toolbar(role-table)', function(obj){
+		            if(obj.event === 'add'){
+		                window.add();
+		            } else if(obj.event === 'refresh'){
+		                window.refresh();
+		            } else if(obj.event === 'batchRemove'){
+		                window.batchRemove(obj);
+		            }
+		        });
+		
+		        form.on('submit(role-query)', function(data){
+		            table.reload('role-table',{where:data.field});
+		            return false;
+		        });
+		
+		        form.on('switch(role-enable)', function(obj){
+		            layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+		        });
+
+
+		
+		        window.refresh = function(){
+		            table.reload('role-table');
+		        }
+		    })
+		</script>
+	</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="stylesheet" href="/static/component/layui/css/layui.css" />
+    <link rel="stylesheet" href="/static/admin/css/pearCommon.css" />
+	<link rel="stylesheet" href="/static/admin/css/pearForm.css" />
+    <link rel="stylesheet" href="/static/admin/css/pearButton.css" />
+    <link href="/static/editor.md/css/editormd.min.css" rel="stylesheet" />
+  <style>
+    body{margin: 10px;}
+
+
+  </style>
+</head>
+<body class="layui-bg-gray">
+  <div >
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body layui-row layui-form layui-col-space10" lay-filter="component-form-element">
+			<div class="layui-col-md12">
+			  <input type="text" name="name" hover value="{{ questioninfo.name }}" autocomplete="off" class="layui-input" id="name">
+			</div>
+
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md12">
+              <select name="mod" lay-verify="required" lay-search id="mod">
+              <option value="{{ questioninfo.mod.id }}">{{ questioninfo.mod.name }}</option>
+              {% for mod in mods %}
+                  <option value="{{ mod.id }}">{{ mod.name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md12">
+              <select name="tq_type" lay-verify="required" lay-search id="tq_type">
+                        <option value="{{ questioninfo.tq_type }}">{{ questioninfo.get_tq_type_display }}</option>
+              {% for questioninfo_tq_type in questioninfo_tq_types %}
+                  <option value="{{ questioninfo_tq_type.0 }}">{{ questioninfo_tq_type.1 }}</option>
+              {% endfor %}
+              </select>
+            </div>
+
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md12">
+              <select name="type" lay-verify="required" lay-search id="type">
+                        <option value="{{ questioninfo.type }}">{{ questioninfo.get_type_display }}</option>
+              {% for questioninfo_type in questioninfo_types %}
+                  <option value="{{ questioninfo_type.0 }}">{{ questioninfo_type.1 }}</option>
+              {% endfor %}
+              </select>
+            </div>
+
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md12">
+              <select name="option" lay-verify="required" lay-search id="option">
+                        <option value="{{ option_info_true.option }}">{{ option_info_true.get_option_display }}</option>
+              {% for option in options %}
+                  <option value="{{ option.0 }}">{{ option.1 }}</option>
+              {% endfor %}
+              </select>
+            </div>
+            {% for option_info in options_info%}
+            <div class="layui-col-md6">
+			  <input type="text" name="{{ option_info.option }}" hover value="{{ option_info.option_content }}" autocomplete="off" class="layui-input" id="{{ option_info.option }}">
+			</div>
+          {% endfor %}
+              <div class="layui-col-md6">
+                  <button class="layui-btn layui-btn-radius change" lay-submit lay-filter="component-form-element">立即提交</button>
+              </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script src="/static/component/layui/layui.js"></script>
+<script>
+layui.use(['form', 'jquery'], function () {
+    let form = layui.form;
+    let $ = layui.jquery;
+
+    $("body").on("click",".change",function(){
+        let loading = layer.load();
+        $.ajax({
+            url:'{% url 'exam_online:edit_questioninfo' %}',
+            type:'POST',
+            data:{'questioninfo_id':{{ questioninfo.id }},
+                  'name':$('#name').val(),
+                  'mod':$('#mod').val(),
+                  'tq_type':$('#tq_type').val(),
+                  'type':$('#type').val(),
+                  'option':$('#option').val(),
+                  '0':$('#0').val(),
+                  '1':$('#1').val(),
+                  '2':$('#2').val(),
+                  '3':$('#3').val(),
+                  '4':$('#4').val(),
+                  '5':$('#5').val(),},
+            success:function(data){
+                layer.close(loading);
+                console.log(data);
+                if(data['status']) {
+                    layer.msg("完成", {
+                        icon: 1,
+                        time: 1000
+                    }, function () {
+                        parent.innerPageAddCallBack(parent.layer.getFrameIndex(window.name));
+                    })
+                }else{
+                    layer.msg(data.msg);
+                    console.log(data.msg)
+                }
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>        

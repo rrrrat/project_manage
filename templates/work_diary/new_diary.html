@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="stylesheet" href="/static/component/layui/css/layui.css" />
+	<link rel="stylesheet" href="/static/admin/css/pearForm.css" />
+    <link rel="stylesheet" href="/static/admin/css/pearButton.css" />
+    <link href="/static/editor.md/css/editormd.min.css" rel="stylesheet" />
+  <style>
+    body{margin: 10px;}
+
+
+  </style>
+</head>
+<body class="layui-bg-gray">
+  <div >
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body layui-row layui-form layui-col-space10" lay-filter="component-form-element">
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md6">
+              <select name="receive_user" lay-verify="required" lay-search id="receive_user">
+              <option value="0">请选择接收人</option>
+              {% for user in users %}
+                  <option value="{{ user.username }}">{{ user.name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md6">
+              <select name="project" lay-verify="required" lay-search id="project">
+                        <option value="0">请选择所属项目</option>
+              {% for project in projects %}
+                  <option value="{{ project.id }}">{{ project.name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+              <div class="layui-col-md6">
+                  <button class="layui-btn layui-btn-radius change" lay-submit lay-filter="component-form-element">立即提交</button>
+              </div>
+            <div id="test-editor">
+                <textarea style="display:none;" id="show" name="show"></textarea>
+            </div>
+            <div class="layui-col-md4">
+              <button class="layui-btn layui-btn-radius change" lay-submit lay-filter="component-form-element">立即提交</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script src="/static/component/layui/layui.js"></script>
+<script>
+layui.use(['form', 'element','jquery','pearOper','code'], function() {
+    var from = layui.form;
+    var element = layui.element;
+    var $ = layui.jquery;
+    var pearOper = layui.pearOper;
+
+    $("body").on("click",".change",function(){
+        let loading = layer.load();
+        $.ajax({
+            url:'{% url 'work_diary:new_diary' %}',
+            type:'POST',
+            data:{'receive_user':$('#receive_user').val(),
+                  'project':$('#project').val(),
+                  'show':$('#show').val(),},
+            success:function(data){
+                layer.close(loading);
+                pearOper.loadRemove(1000);
+                var dataObj=JSON.parse(data);
+                if(dataObj['status']){
+                    layer.msg('提交成功');
+                }
+                else{
+                    layer.msg(dataObj.message)
+                }
+            }
+        })
+    })
+})
+</script>
+<script src="/static/editor.md/jquery.min.js"></script>
+<script src="/static/editor.md/editormd.min.js"></script>
+<script type="text/javascript">
+var testEditor;
+testEditor = editormd("test-editor", {
+     placeholder:'本条目支持使用Markdown语法编辑，左边编写，右边预览',  //默认显示的文字，这里就不解释了
+     width: "90%",
+     height: 640,
+     syncScrolling: "single",
+     path: "/static/editor.md/lib/",   //你的path路径（原资源文件中lib包在我们项目中所放的位置）
+     saveHTMLToTextarea: true,
+     emoji: true,
+     taskList: true,
+     tocm: true,         // Using [TOCM]
+     tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+     flowChart: true,             // 开启流程图支持，默认关闭
+     sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+     imageUpload    : true, //开启图片上传
+     imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+     imageUploadURL : "{% url 'project_page:upload_img' %}",
+     toolbarIcons : function() {
+         return [
+             "undo", "redo", "|",
+             "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|",
+             "h1", "h2", "h3", "h4", "h5", "h6", "|",
+             "list-ul", "list-ol", "hr", "|",
+             "reference-link", "image", "code", "preformatted-text", "table", "datetime", "emoji", "html-entities", "|",
+             "watch", "preview", "|",
+             "help"
+         ]
+     },
+});
+</script>
+</body>
+</html>        

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link href="/static/component/layui/css/layui.css" rel="stylesheet" />
+        <link rel="stylesheet" href="/static/admin/css/pearForm.css" />
+		<link href="/static/admin/css/pearCommon.css" rel="stylesheet" />
+        <link rel="stylesheet" href="/static/admin/css/pearOper.css"/>
+	</head>
+	<body class="pear-container">
+	<div class="layui-card">
+	    <div class="layui-card-body">
+	        <form class="layui-form" action="">
+	            <div class="layui-form-item">
+	                <label class="layui-form-label">考试名称</label>
+	                <div class="layui-input-inline">
+	                    <input type="text" id="name" name="name" placeholder="" class="layui-input">
+	                </div>
+                    <label class="layui-form-label">考试类型:</label>
+                    <div class="layui-input-inline">
+                        <select lay-verify="required" id="type" name="type">
+                            <option value="0" selected>练习</option>
+                            <option value="1">正式</option>
+                        </select>
+                    </div>
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="role-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+
+	        </form>
+	    </div>
+	</div>
+	<div class="layui-card">
+	    <div class="layui-card-body">
+	        <table id="role-table" lay-filter="role-table"></table>
+	    </div>
+	</div>
+	</body>
+	
+	<script type="text/html" id="role-bar">
+	    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="views"><i class="layui-icon layui-icon-circle-dot"></i></button>
+	</script>
+
+
+        <script type="text/html" id="createtime">
+            {% verbatim myblock %}
+            {{layui.util.toDateString(d.createtime, 'yyyy-MM-dd HH:mm:ss')}}
+            {% endverbatim myblock %}
+        </script>
+        <script type="text/html" id="examtype">
+            123
+        </script>
+		<script src="/static/component/layui/layui.js"></script>
+		<script>
+		    layui.use(['table','form','jquery'],function () {
+		        let table = layui.table;
+		        let form = layui.form;
+		        let $ = layui.jquery;
+		        var pearOper = layui.pearOper;
+		        var pearTab = layui.pearTab;
+		
+		        let MODULE_PATH = "{% url 'question_manage:question' %}";
+		
+		        let cols = [
+		            [
+		                {type:'checkbox'},
+		                {field:'id', title:'ID', width:80, fixed: 'left', unresize: true, totalRowText: '合计'},
+		                {title: '考试名', field: 'name', align:'center'},
+		                {title: '考试类型', field: 'exam_type', align:'center'},
+		                {title: '考试时间', field: 'create_time', align:'center'},
+                        {fixed: 'right', title: '操作', toolbar: '#role-bar', align:'center', width:80}
+		            ]
+		        ];
+		
+		        table.render({
+		            elem: '#role-table',
+		            url: '{% url 'exam_online:get_exam' %}',
+		            page: true ,
+		            cols: cols ,
+		            skin: 'line',
+		            toolbar: '#role-toolbar',
+		            defaultToolbar: [{
+		                layEvent: 'refresh',
+		                icon: 'layui-icon-refresh',
+		            }, 'filter', 'print', 'exports']
+		        });
+		
+		        table.on('tool(role-table)', function(obj){
+		            if(obj.event === 'views'){
+		                window.views(obj);
+		            } else if(obj.event === 'success'){
+		                window.success(obj);
+		            }
+		        });
+		
+		        table.on('toolbar(role-table)', function(obj){
+		            if(obj.event === 'add'){
+		                window.add();
+		            } else if(obj.event === 'refresh'){
+		                window.refresh();
+		            } else if(obj.event === 'batchRemove'){
+		                window.batchRemove(obj);
+		            }
+		        });
+		
+		        form.on('submit(role-query)', function(data){
+		            table.reload('role-table',{where:data.field});
+		            return false;
+		        });
+		
+		        form.on('switch(role-enable)', function(obj){
+		            layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+		        });
+
+		
+		        window.views = function(obj){
+                    layer.open({
+		                type: 2,
+		                title: obj.data['name'],
+		                shade: 0.1,
+		                area: ['1000px', '500px'],
+		                content: '{% url 'exam_online:get_exam_info' %}'+'?examid='+obj.data['id']
+		            });
+		        };
+
+		
+		        window.refresh = function(){
+		            table.reload('role-table');
+		        }
+		    })
+		</script>
+	</body>
+</html>

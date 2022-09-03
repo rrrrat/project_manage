@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="stylesheet" href="/static/component/layui/css/layui.css" />
+	<link rel="stylesheet" href="/static/admin/css/pearForm.css" />
+  <style>
+    body{margin: 10px;}
+
+
+  </style>
+</head>
+<body class="layui-bg-gray">
+  <div >
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md6">
+        <div class="layui-card">
+          <div class="layui-card-body layui-row layui-form layui-col-space10" lay-filter="component-form-element">
+			<div class="layui-col-md">
+			  <input type="text" name="username" hover placeholder="账号" autocomplete="off" class="layui-input" id="username">
+			</div>
+			<div class="layui-col-md">
+			  <input type="text" name="name" hover placeholder="姓名" autocomplete="off" class="layui-input" id="name">
+			</div>
+			<div class="layui-col-md">
+			  <input type="text" name="mobile" hover placeholder="电话" autocomplete="off" class="layui-input" id="moblie">
+			</div>
+			<div class="layui-col-md">
+			  <input type="text" name="email" hover placeholder="邮箱" autocomplete="off" class="layui-input" id="email">
+			</div>
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md">
+              <select name="group" lay-verify="required" lay-search id="group">
+              {% for group in groups %}
+                  <option value="{{ group.id }}">{{ group.name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+            <div class="layui-card-body layui-row layui-col-space10 layui-col-md">
+              <select name="role" lay-verify="required" lay-search id="role">
+              {% for role in roles %}
+                  <option value="{{ role.id }}">{{ role.name }}</option>
+              {% endfor %}
+              </select>
+            </div>
+            <div class="layui-col-md">
+              <button class="layui-btn layui-btn-radius change" lay-submit lay-filter="component-form-element">立即提交</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+ 
+<script src="/static/component/layui/layui.js"></script>
+<script>
+layui.use(['form', 'element','jquery','pearOper','code'], function() {
+    var from = layui.form;
+    var element = layui.element;
+    var $ = layui.jquery;
+    var pearOper = layui.pearOper;
+
+    $("body").on("click",".change",function(){
+        $.ajax({
+            url:'{% url 'system_manager:add_user' %}',
+            type:'POST',
+            data:{'username':$('#username').val(),
+                  'name':$('#name').val(),
+                  'email':$('#email').val(),
+                  'moblie':$('#moblie').val(),
+                  'group':$('#group').val(),
+                  'role':$('#role').val(),},
+            success:function(data){
+                var dataObj=JSON.parse(data);
+                if(dataObj['code']){
+                    layer.msg('用户添加成功，请关闭')
+                }
+                else{
+                    layer.msg(dataObj.message)
+                }
+            }
+        })
+    })
+})
+</script>
+</body>
+</html>        

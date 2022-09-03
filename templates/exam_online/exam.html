@@ -1,0 +1,323 @@
+{% load exam_online_utils %}
+<!DOCTYPE html>
+{% load exam_online_utils %}
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="/static/component/layui/css/layui.css" />
+		<link rel="stylesheet" href="/static/admin/css/pearStep.css" />
+		<link rel="stylesheet" href="/static/admin/css/pearForm.css" />
+		<link rel="stylesheet" href="/static/admin/css/pearButton.css"/>
+		<style>
+			.pear-container {
+				margin: 10px;
+				background-color: whitesmoke;
+			}
+		</style>
+	</head>
+	<body class="pear-container">
+		<div class="layui-card">
+			<div class="layui-card">
+				<div class="layui-card-body" style="padding-top: 40px;">
+					<div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+						<div carousel-item>
+							<div>
+								<form class="layui-form" action="javascript:void(0);" style="margin: 0 auto;max-width: 700px;padding-top: 50px;">
+									<div class="layui-form-item">
+										<label class="layui-form-label">考试名称:</label>
+										<div class="layui-input-block">
+											<input type="text" id="exam_name" value="{% now 'Y-m-d'%}-{{ str_md5 }}" class="layui-input" lay-verify="string" disabled="disabled" required />
+
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">考试类型:</label>
+										<div class="layui-input-block">
+											<select lay-verify="required" id="exam_type">
+												<option value="0" selected>练习</option>
+												<option value="1">正式</option>
+											</select>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<div class="layui-input-block">
+											<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStepStart">
+												&emsp;开始考试&emsp;
+											</button>
+										</div>
+									</div>
+								</form>
+							</div>
+                            {% for questioninfo in questioninfos %}
+                                {% if forloop.counter != 20 %}
+							<div>
+								<form class="layui-form" action="javascript:void(0);" style="margin: 0 auto;max-width: 1000px;padding-top: 40px;">
+
+									<div class="layui-form-item">
+                                        <h2>{{ questioninfo.name }}</h2>
+									</div>
+                                    <div class="layui-card layui-form" lay-filter="component-form-element">
+                                      <div class="layui-card-body layui-row layui-col-space36">
+                                        <div class="layui-col-md12">
+                                          {% for option in questioninfo.id|get_option  %}
+                                          <input type="radio" name="result{{ questioninfo.id }}" value="{{ option.option_value }}" title="{{ option.option_content }}"><br>
+                                          {% endfor %}
+                                        </div>
+                                      </div>
+                                    </div>
+									<div class="layui-form-item">
+										<div class="layui-input-block">
+                                            <button type="button" class="pear-btn pear-btn-success pre">上一步</button>
+											<button class="pear-btn pear-btn-success" lay-submit lay-filter="formStep{{ forloop.counter }}">
+												&emsp;下一步&emsp;
+											</button>
+										</div>
+									</div>
+								</form>
+							</div>
+                                {% else %}
+                                <div>
+                                    <form class="layui-form" action="javascript:void(0);" style="margin: 0 auto;max-width: 460px;padding-top: 50px;">
+                                        <div class="layui-form-item">
+                                            <h2>{{ questioninfo.name }}</h2>
+                                        </div>
+                                        <div class="layui-card layui-form" lay-filter="component-form-element">
+                                          <div class="layui-card-body layui-row layui-col-space36">
+                                            <div class="layui-col-md12">
+                                              {% for option in questioninfo.id|get_option  %}
+                                              <input type="radio" name="result{{ questioninfo.id }}" value="{{ option.option_value }}" title="{{ option.option_content }}"><br>
+                                              {% endfor %}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <div class="layui-input-block">
+                                                <button type="button" class="pear-btn pear-btn-success pre">上一步</button>
+                                                <button class="pear-btn pear-btn-success" lay-submit lay-filter="commit">
+                                                    &emsp;完成&emsp;
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script src="/static/component/layui/layui.js"></script>
+		<script>
+			layui.use(['form', 'pearStep'], function() {
+				var $ = layui.$,
+					form = layui.form,
+					pearStep = layui.pearStep,
+				    element = layui.element,
+                    pearOper = layui.pearOper;
+
+				pearStep.render({
+					elem: '#stepForm',
+					filter: 'stepForm',
+					width: '100%', //设置容器宽度
+					stepWidth: '750px',
+					height: '500px',
+					stepItems: [{
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}, {
+						title: ' '
+					}]
+				});
+
+				form.on('submit(formStepStart)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+
+				form.on('submit(formStep1)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep2)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep3)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep4)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep5)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep6)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep7)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep8)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep9)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep10)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep11)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep12)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep13)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep14)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep15)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep16)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep17)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep18)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep19)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+				form.on('submit(formStep20)', function(data) {
+					pearStep.next('#stepForm');
+					return false;
+				});
+
+                form.on('submit(commit)', function(){
+                    let loading = layer.load();
+                    console.log($('#result12').val());
+                    $.ajax({
+                        url:'{% url 'exam_online:exam' %}',
+                        type:'POST',
+                        data:{'exam_type': $('#exam_type').val(),
+                              'exam_name': $('#exam_name').val(),
+                                {% for questioninfo in questioninfos %}
+                              '{{ questioninfo.id }}':$("input[name='result{{ questioninfo.id }}']:checked").val(),
+                              {% endfor %}},
+                        success:function(data){
+                            layer.close(loading);
+                            if(data['status']) {
+                                console.log(data);
+                                layer.msg("完成", {
+                                    icon: 1,
+                                    time: 1000
+                                }, function () {
+                                    parent.innerPageAddCallBack(parent.layer.getFrameIndex(window .name));
+                                })
+                            }else{
+                                console.log(data);
+                                layer.msg("得分：" + data.msg);
+                            }
+                        }
+                    })
+                });
+
+				$('.pre').click(function() {
+					pearStep.pre('#stepForm');
+					return false;
+				});
+
+				$('.next').click(function() {
+					step.next('#stepForm');
+				    return false;
+				});
+			});
+
+
+
+		</script>
+	</body>
+</html>

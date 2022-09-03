@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link href="/static/component/layui/css/layui.css" rel="stylesheet" />
+		<link href="/static/admin/css/pearCommon.css" rel="stylesheet" />
+        <link rel="stylesheet" href="/static/admin/css/pearOper.css"/>
+	</head>
+	<body class="pear-container">
+	<div class="layui-card">
+	    <div class="layui-card-body">
+	        <form class="layui-form" action="">
+	            <div class="layui-form-item">
+	                <label class="layui-form-label">所属项目</label>
+                    <div class="layui-input-inline layui-row layui-col-space10 layui-col-md4"  lay-filter="component-form-element">
+                      <select name="project" lay-verify="required" lay-search id="project">
+                      <option value="0">请选择</option>
+                      {% for project in projects %}
+                          <option value="{{ project.id }}">{{ project.name }}</option>
+                      {% endfor %}
+                      </select>
+                    </div>
+	                <label class="layui-form-label">创建用户</label>
+                    <div class="layui-input-inline layui-row layui-col-space10 layui-col-md4"  lay-filter="component-form-element">
+                      <select name="createuser" lay-verify="required" lay-search id="createuser">
+                      <option value="0">请选择</option>
+                      {% for user in users %}
+                          <option value="{{ user.id }}">{{ user.name }}</option>
+                      {% endfor %}
+                      </select>
+                    </div>
+	                <label class="layui-form-label">是否已读</label>
+                    <div class="layui-input-inline layui-row layui-col-space10 layui-col-md6"  lay-filter="component-form-element">
+                      <select name="status" lay-verify="required" lay-search id="status">
+                      <option value="2">请选择</option>
+                      <option value="0">未读</option>
+                      <option value="1">已读</option>
+                      </select>
+                    </div>
+	                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="role-query">
+	                    <i class="layui-icon layui-icon-search"></i>
+	                    查询
+	                </button>
+	                <button type="reset" class="pear-btn pear-btn-md">
+	                    <i class="layui-icon layui-icon-refresh"></i>
+	                    重置
+	                </button>
+	            </div>
+	            </div>
+	        </form>
+	    </div>
+	</div>
+	<div class="layui-card">
+	    <div class="layui-card-body">
+	        <table id="role-table" lay-filter="role-table"></table>
+	    </div>
+	</div>
+	</body>
+	
+{#	<script type="text/html" id="role-toolbar">#}
+{#	    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">#}
+{#	        <i class="layui-icon layui-icon-add-1"></i>#}
+{#	        新增#}
+{#	    </button>#}
+{#	</script>#}
+	
+	<script type="text/html" id="role-bar">
+	    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="views"><i class="layui-icon layui-icon-circle-dot"></i></button>
+	</script>
+
+
+        <script type="text/html" id="createtime">
+            {% verbatim myblock %}
+            {{layui.util.toDateString(d.createtime, 'yyyy-MM-dd HH:mm:ss')}}
+            {% endverbatim myblock %}
+        </script>
+		<script src="/static/component/layui/layui.js"></script>
+		<script>
+		    layui.use(['table','form','jquery'],function () {
+		        let table = layui.table;
+		        let form = layui.form;
+		        let $ = layui.jquery;
+		        var pearOper = layui.pearOper;
+		        var pearTab = layui.pearTab;
+		
+		        let MODULE_PATH = "{% url 'work_diary:get_diary' %}";
+		
+		        let cols = [
+		            [
+		                {type:'checkbox'},
+		                {field: 'id', title:'ID', width:80, fixed: 'left', unresize: true, totalRowText: '合计'},
+		                {title: '所属项目', field: 'project', align:'center'},
+		                {title: '创建人', field: 'createuser', align:'center'},
+		                {title: '接收人是否已读', field: 'status', align:'center'},
+		                {title: '添加时间', field: 'createtime', align:'center',templet:'#createtime', sort: true},
+		                {fixed: 'right', title: '操作', toolbar: '#role-bar', align:'center'}
+		            ]
+		        ];
+		
+		        table.render({
+		            elem: '#role-table',
+		            url: '{% url 'work_diary:get_diary' %}' + '?type=1',
+		            page: true ,
+		            cols: cols ,
+		            skin: 'line',
+		            toolbar: '#role-toolbar',
+		            defaultToolbar: [{
+		                layEvent: 'refresh',
+		                icon: 'layui-icon-refresh',
+		            }, 'filter', 'print', 'exports']
+		        });
+		
+		        table.on('tool(role-table)', function(obj){
+		            if(obj.event === 'views'){
+		                window.views(obj);
+		            } else if(obj.event === 'success'){
+		                window.success(obj);
+		            }
+		        });
+		
+		        table.on('toolbar(role-table)', function(obj){
+		            if(obj.event === 'add'){
+		                window.add();
+		            } else if(obj.event === 'refresh'){
+		                window.refresh();
+		            } else if(obj.event === 'batchRemove'){
+		                window.batchRemove(obj);
+		            }
+		        });
+		
+		        form.on('submit(role-query)', function(data){
+		            table.reload('role-table',{where:data.field})
+		            return false;
+		        });
+		
+		        form.on('switch(role-enable)', function(obj){
+		            layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+		        });
+
+		
+		        window.views = function(obj){
+                    layer.open({
+		                type: 2,
+		                title: obj.data['name'],
+		                shade: 0.1,
+		                area: ['1000px', '500px'],
+		                content: '{% url 'work_diary:view_diary' %}'+'?diaryId='+obj.data['id']
+		            });
+		        }
+
+		
+		        window.refresh = function(){
+		            table.reload('role-table');
+		        }
+		    })
+		</script>
+	</body>
+</html>
