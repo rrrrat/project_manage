@@ -1,6 +1,6 @@
 # ProjectManage
-2020年的了，这个如果有人觉得不错，请告诉我，我继续维护。
-基于Django的项目管理系统，可实现对项目实施过程中出现的问题进行上报，跟踪，管理。
+### 2020年的了，这个如果有人觉得不错，请告诉我，我继续维护。
+### 基于Django的项目管理系统，可实现对项目实施过程中出现的问题进行上报，跟踪，管理。
 
 [![](https://img.shields.io/badge/Python-3.6+-green.svg)]()[![](https://img.shields.io/badge/Django-3.0.7-green.svg)]()[![](https://img.shields.io/badge/Version-0.50-green.svg)]()
 
